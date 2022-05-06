@@ -14,8 +14,11 @@ class JogoDaVelha:
     list_button = []
 
     def __init__(self, frame, frame2):
+        # Criacao dos componentes da tela
         self.var_label = tk.IntVar()
         self.var_order = tk.IntVar()
+        self.var_jogador = tk.IntVar()
+
 
         self.text_label = tk.Label(frame, text="Escolha:")
         self.radio1 = tk.Radiobutton(frame, text="X", value=0, variable=self.var_label)
@@ -28,14 +31,27 @@ class JogoDaVelha:
         self.radio2_order = tk.Radiobutton(
             frame, text="Segundo", value=1, variable=self.var_order
         )
+
+        self.text_label_jogador = tk.Label(frame, text="Tipo da IA:")
+        self.radio1_jogador = tk.Radiobutton(
+            frame, text="Perfeita", value=1, variable=self.var_jogador
+        )
+        self.radio2_jogador = tk.Radiobutton(
+            frame, text="Ruim", value=-1, variable=self.var_jogador
+        )
+
+
         self.text_label.grid(row=0, column=0, pady=5)
         self.text_label_order.grid(row=1, column=0, pady=5)
+        self.text_label_jogador.grid(row=2, column=0, pady=5)
 
         self.radio1.grid(row=0, column=1, pady=5)
         self.radio2.grid(row=0, column=2, pady=5)
-
         self.radio1_order.grid(row=1, column=1, pady=5)
         self.radio2_order.grid(row=1, column=2, pady=5)
+        self.radio1_jogador.grid(row=2, column=1, pady=5)
+        self.radio2_jogador.grid(row=2, column=2, pady=5)
+
 
         self.button_play = tk.Button(
             frame2,
@@ -155,16 +171,20 @@ class JogoDaVelha:
             button.config(state="disable")
 
     def set_state_button(self):
+        # configuracao dos botoes do tabuleiro para normais (ativados)
         for button in self.list_button:
             button.config(state="normal", text="")
 
     def button_play_start(self):
+        # Botao de iniciar apertado, configuracoes dos parametros e inicio do jogo
         self.button_play.config(state="disable")
 
         self.set_state_button()
 
         self.label = self.var_label.get()
         self.order = self.var_order.get()
+        self.type_IA = self.var_jogador.get()
+
         if self.label == 0:
             self.ia_label = 1
         else:
@@ -176,23 +196,30 @@ class JogoDaVelha:
             self.IA()
 
     def IA(self):
-        position = IA_play(self.board)
+        # Turno da IA
+        # Com selecao da jogada e evento de click realizado
+
+        position = IA_play(self.board, self.type_IA)
         cord = self.position2cord(position)
         self.button_clicked(cord, self.ia_label, self.ia_player)
 
     def set_position(self, position, player):
+        # definicao da posicao que houve a jogada
         self.board[position[0], position[1]] = player
 
     def position2cord(self, position):
+        # conversao da posicao de 2d para escolha do botao
         cord = position[0] * 3 + position[1]
         return cord
 
     def cord2position(self, cord):
+        # conversao do valor do botao para x, y (posicao no tabuleiro)
         x = int(np.floor(cord / 3))
         y = int(cord - 3 * x)
         return x, y
 
     def over(self):
+        # situacoes de game over para ativar pop-up
         if wins(self.board, self.ia_player):
             showinfo("", "A IA venceu!!")
         elif wins(self.board, self.human_player):
@@ -202,6 +229,8 @@ class JogoDaVelha:
         self.button_play.config(state="normal")
 
     def button_clicked(self, button, label, player):
+        #evento de click em uma posicao do tabuleiro
+
         if self.list_button[button]["text"] == "":
             position = self.cord2position(button)
             self.set_position(position, player)

@@ -12,8 +12,6 @@ if __name__ == "__main__":
     frame_tabuleiro = tk.Frame(root)
     frame_tabuleiro.grid(sticky=tk.S)
 
-    clicked = True
-
     JogoDaVelha(frame_radio, frame_tabuleiro)
 
     root.mainloop()
